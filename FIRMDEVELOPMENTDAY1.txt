@@ -1,0 +1,148 @@
+﻿
+Day 0ne of Firmware Development[Embedded Programs]:14/02/2024
+
+In this Module we will learn about basics 
+
+1.] RAM->expands Random Access Memory is a Primary Storage.
+2.]Hardware is a Secondart storage Device [Volatile-Memory].
+3.]Clock is a Heartbeat of CPU.
+4.]There is 2 types of Random Access Memory thet is S-RAM and D-RAM.
+5.]S-RAM is Flip-Flop (made of) STATIC.
+6.]D-RAM is Capacitors (made of) DYNAMIC. 
+
+ARM CORTEX M4 180MHz:
+   
+
+
+
+
+
+
+ARM Stands for cortex A->Application  cortex R->Real Time Application cortex M->Microcontroller [Processor only]
+  Formula to calculate Time T=1/F I.E.,F=180MHz
+                            T=1/180(10)^6    [(10)^6]->M
+                            
+ Static RAM is faster than Dynamic RAM.
+ BUS -> is used to communicate between CPU & Computer(Medium).
+      PHERIPHERALS:-GPIO=>To Communicate outside the environment
+     *These are sent by "System BUS" (S BUS)
+     
+    AHB1 ->180MHz(Maximum)                                
+      |      |_______>CLOCK RATE                              
+      |_______________________________>2 Types 
+          |                                                         |                
+         AHB/APB2 <------------------AHB/APB1          
+            |   ^                      |                    |                       
+            |   |----DOUBLE THE (PB1)   |                       |
+            |___> 90MHz [maximum]      |_____>45MHz [maximum]
+
+
+
+
+
+
+                                                 GPIO                                                        
+1.]Reading digital signals    -->INPUT.
+2.]Issuing interrupts.  
+3.]Generating triggers for external Components.
+                        |______>Output Devices [LED,Motor]
+ 
+Generic pin:Values consists of one or two Voltage settings 
+                            (HIGH OR LOW)
+
+MULTIPLEXING:---->The pins use this method.
+
+Generic port:All the pins are connected to port.
+
+	
+
+
+
+
+
+
+
+
+
+
+
+Input mode[High z]---->Cannot be predicted
+     [May be zero’s  or one’s] known as HIGH Z
+
+INPUT MODE:-
+         =>Internal pull up <-------[inside pin]
+                     |-------->RESISTOR
+         =>Internal pull down
+                     |-------->RESISTOR
+
+         outside pin----->External
+
+Output mode:- Open Drain State
+  =>Pull up  resistor ------>always use or give 0 not 1
+*Gate Drain Source(GDS)
+      
+                         (or)
+  =>PUSH PULL CONFIGURATION(AUTOMATIC)
+       *Enable (activate) the clock to access the pin.
+       Example: GPIO PORT H -->To activate this pin ,we enable the AHB1’S clock to access as it is connected to (AHB1 => Bus)
+
+2^1   =>   2        values
+2^1   =>   4        values
+2^1   =>   1024  values
+
+2^32 =>   2^10   2^10   2^10   2^2 --->4 Giga Address
+      |_____> 0 X 0000 0000
+                     :
+                     0 X FFFF FFFF
+       
+
+==>MEMORY MAPPED I/O:
+          Using memory to access the input and output making position in memory with address.
+
+[27 registers ==> structure=>type def=>made as structure pointer =>named as RCC
+
+(AHB1ENR-->member)
+            Using address we can access .
+
+
+
+PROGRAM:-
+     RCC->AHB1ENR  |= 1;
+       |__>RCC->AHB1ENR = RCC->AHB1ENR | 1;
+       (or)
+
+
+     RCC->AHB1ENR  |=(1<<28);
+                       Value < ___|       |____>Bit address Count
+       (or)
+      #define PA5_enable  (1<<28);
+      RCC->AHB1ENR |= PA5_enable;
+
+      GPIOA  -> MODER  |= (0<<11)
+      GPIOA  -> MODER  |= (0<<10)
+
+
+             LED BLINKING PROGRAM:
+     
+#include "stm32f4xx.h"
+void delayMs(int n);
+int main(void) 
+{
+    RCC->AHB1ENR |= 1; /* enable GPIOA clock */
+   GPIOA->MODER &= ~0x00000C00;    
+    GPIOA->MODER |=0x00000400; 
+while(1)
+ {
+     GPIOA->ODR |= 0x00000020; 
+     delayMs(500);
+     GPIOA->ODR &= ~0x00000020; 
+     delayMs(500);
+  }
+}
+/* 16 MHz SYSCLK */
+ void delayMs(int n) 
+ {
+ int i;
+for (; n > 0; n--)
+for (i = 0; i < 3195; i++) ;
+ }

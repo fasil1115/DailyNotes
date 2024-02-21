@@ -1,0 +1,60 @@
+﻿GPIO -------------->Have 7 memory space and address,that memory space is called Registers
+
+
+GPIOA------------>0x4002 0000  -  0x4002 03FF
+ 
+                                                      |
+                           All registers for GPIOA have been inside
+ 
+Different address space but only one register
+
+Registers:
+     ----->MODER
+      ------>OTYPER
+      ------>PUPDR
+      ------>IDR
+      ------>ODR
+      ------>BSRR
+    ------>LCKR
+     ------>AFRL
+     ------>AFRH
+
+==> GPIOA  base address will be ------> 0x4002 0000
+==> When we know that base address of GPIOA and we know that offset 0x00 then we know the place.
+
+A= Base address(20) + offset(2)
+then the base address will be A(22)
+{base address + offse}
+
+MODER REGISTER:
+      A = base address + offset : 0x00
+             start address will be A
+
+OTYPER REGISTER:
+       base address + offset : 0x04   --------->Increase by 4  [increase by 4].
+                                                                                              UL ---> Unsigned Long
+
+pheriphereal base|  4002 0000
+                             |         |        Difference offset
+                             |         |
+pheripheral offset |         2 0000
+Base 
+                             |
+                             |    4000 0000
+
+Pheripheral Base (Pheripheral + AHB1 PHERIPH-OFFSET)
+
+
+*If both address are same the offset will be zero.
+
+[GPIOA-OFFSET =0X0000UL]
+
+GPIOA-Base (AHB1ENR-BASE + GPIO-OFFSET)  
+          
+
+* When we use the (Volatile unsigned int *) then we call as address
+
+* When we do the Integer pointer type cast  (RCCBase + AHB1EN_R_OFFSET) will be changed as address.
+
+WE USE OUTSIDE “*   POINTER” IT HELPS TO FIND THE VALUES OF THE ADDRESS 
+(*(volatile unsigned int *)(RCC_BASE + AHB1EN_R OFFSET))
